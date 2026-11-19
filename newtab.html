@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>New Tab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-header">
+        <h1>Speed Dial</h1>
+        <div class="header-actions">
+          <button id="themeButton" class="theme-button" type="button" aria-label="Switch to dark theme" title="Switch theme">
+            <span id="themeIcon" aria-hidden="true">&#9790;</span>
+          </button>
+          <button id="addButton" class="add-button" type="button" aria-label="Add a speed dial">
+            <span aria-hidden="true">+</span>
+          </button>
+        </div>
+      </header>
+
+      <section id="dialGrid" class="dial-grid" aria-label="Speed dials"></section>
+    </main>
+
+    <div id="dialogBackdrop" class="dialog-backdrop" hidden>
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+        <h2 id="dialogTitle">Add speed dial</h2>
+        <form id="dialForm">
+          <label for="nameInput">Name</label>
+          <input id="nameInput" name="name" type="text" maxlength="40" required placeholder="Example">
+
+          <label for="urlInput">Web address</label>
+          <input id="urlInput" name="url" type="text" inputmode="url" required placeholder="https://example.com">
+
+          <p id="formError" class="form-error" role="alert"></p>
+
+          <div class="dialog-actions">
+            <button id="cancelButton" class="secondary-button" type="button">Cancel</button>
+            <button class="primary-button" type="submit">Add</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

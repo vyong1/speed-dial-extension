@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Speed Dial",
+  "version": "1.0.0",
+  "description": "A customizable collection of website speed dials.",
+  "permissions": ["storage"],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  }
+}
