@@ -1,9 +1,11 @@
 # Speed Dial New Tab
 
 A Chrome extension that replaces the New Tab page with a customizable speed dial
-collection. Dials use each site's favicon and can be added or deleted. Added
-dials and the selected theme persist across Chrome restarts. The page includes
-light and dark themes with a toggle in the header.
+collection. Dials use each site's favicon and can be added, edited, or deleted.
+Added dials and the selected theme persist across Chrome restarts. The page
+includes light and dark themes with a toggle in the header. Speed dial names
+can be edited from the pencil button shown on each dial. Use Import and Export
+in the header to back up or restore all speed dials as JSON.
 
 ## Load the extension in Chrome
 
@@ -11,7 +13,7 @@ light and dark themes with a toggle in the header.
 2. Open `chrome://extensions` in Chrome.
 3. Turn on **Developer mode**.
 4. Click **Load unpacked** and select the folder containing `manifest.json`.
-5. Open a new tab to see the Hello World page.
+5. Open a new tab to see the Speed Dial page.
 
 To pick up local changes, click the extension's **Reload** button on
 `chrome://extensions`, then open a new tab.

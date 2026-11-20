@@ -15,8 +15,14 @@ const urlInput = document.getElementById("urlInput");
 const formError = document.getElementById("formError");
 const themeButton = document.getElementById("themeButton");
 const themeIcon = document.getElementById("themeIcon");
+const dialogTitle = document.getElementById("dialogTitle");
+const submitButton = form.querySelector(".primary-button");
+const importButton = document.getElementById("importButton");
+const exportButton = document.getElementById("exportButton");
+const importInput = document.getElementById("importInput");
 
 let dials = [];
+let editingId = null;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -142,7 +148,14 @@ function renderDials() {
       await saveDials();
     });
 
-    article.append(link, deleteButton);
+    const editButton = document.createElement("button");
+    editButton.className = "edit-button";
+    editButton.type = "button";
+    editButton.textContent = "\u270E";
+    editButton.setAttribute("aria-label", `Edit ${dial.name}`);
+    editButton.addEventListener("click", () => openEditDialog(dial));
+
+    article.append(link, editButton, deleteButton);
     grid.appendChild(article);
   });
 }
@@ -150,8 +163,24 @@ function renderDials() {
 function openDialog() {
   form.reset();
   formError.textContent = "";
+  editingId = null;
+  dialogTitle.textContent = "Add speed dial";
+  submitButton.textContent = "Add";
   backdrop.hidden = false;
   nameInput.focus();
+}
+
+function openEditDialog(dial) {
+  form.reset();
+  formError.textContent = "";
+  editingId = dial.id;
+  dialogTitle.textContent = "Edit speed dial";
+  submitButton.textContent = "Save";
+  nameInput.value = dial.name;
+  urlInput.value = dial.url;
+  backdrop.hidden = false;
+  nameInput.focus();
+  nameInput.select();
 }
 
 function closeDialog() {
@@ -189,13 +218,62 @@ form.addEventListener("submit", async event => {
     return;
   }
 
-  dials.push({
-    id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
-    name,
-    url
-  });
+  if (editingId) {
+    dials = dials.map(dial => dial.id === editingId ? { ...dial, name, url } : dial);
+  } else {
+    dials.push({
+      id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
+      name,
+      url
+    });
+  }
   await saveDials();
   closeDialog();
+});
+
+exportButton.addEventListener("click", () => {
+  const exportData = dials.map(({ id, name, url }) => ({ id, name, url }));
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+  const downloadUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = downloadUrl;
+  link.download = "speed-dials.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(downloadUrl);
+});
+
+importButton.addEventListener("click", () => importInput.click());
+
+importInput.addEventListener("change", async () => {
+  const file = importInput.files[0];
+  if (!file) return;
+
+  try {
+    const imported = JSON.parse(await file.text());
+    if (!Array.isArray(imported)) {
+      throw new Error("The imported file must contain a speed dial list.");
+    }
+
+    dials = imported.map((dial, index) => {
+      if (!dial || typeof dial.name !== "string" || typeof dial.url !== "string") {
+        throw new Error(`Invalid speed dial at position ${index + 1}.`);
+      }
+      const name = dial.name.trim();
+      if (!name) throw new Error(`Speed dial ${index + 1} needs a name.`);
+      return {
+        id: typeof dial.id === "string" && dial.id ? dial.id : String(Date.now() + index),
+        name,
+        url: normalizeUrl(dial.url)
+      };
+    });
+    await saveDials();
+  } catch (error) {
+    window.alert(error.message || "Could not import speed dials.");
+  } finally {
+    importInput.value = "";
+  }
 });
 
 async function initialize() {

@@ -15,3 +15,6 @@ Each speed dial is a link with the logo of the website.
 8. The page shall have a light theme
 9. The page shall have a dark theme
 10. Users shall be able to toggle between themes
+11. Users shall be able to edit the name of a speed dial
+12. Users shall be able to import and export all the speed dials
+
