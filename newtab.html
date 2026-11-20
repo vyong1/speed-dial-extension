@@ -17,10 +17,16 @@
               <span aria-hidden="true">&#9776;</span>
             </button>
             <div id="menuDropdown" class="menu-dropdown" role="menu" hidden>
-              <button id="themeButton" class="menu-item" type="button" role="menuitem" aria-label="Switch to dark theme">
-                <span id="themeIcon" aria-hidden="true">&#9790;</span>
-                <span id="themeLabel">Dark theme</span>
-              </button>
+              <div class="menu-theme-control" role="none">
+                <label for="themeSelect">Theme</label>
+                <select id="themeSelect" aria-label="Theme">
+                  <option value="dark">Dark</option>
+                  <option value="light">Light</option>
+                  <option value="blue">Blue</option>
+                  <option value="pink">Pink</option>
+                  <option value="sepia">Sepia</option>
+                </select>
+              </div>
               <div class="menu-size-control" role="none">
                 <span>Dial size</span>
                 <div id="dialSizeButtons" class="dial-size-buttons" role="radiogroup" aria-label="Dial size">

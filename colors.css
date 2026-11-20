@@ -1,14 +1,43 @@
 /* colors.css */
 :root {
-  --color-bg: #FAFAF7;
-  --color-surface: #EDEBE4;
+  --color-bg: #E7E5DE;
+  --color-surface: #D8D5CC;
   --color-accent: #2F5BEA;
   --color-text: #1A1C20;
 }
 
+body[data-theme="light"] {
+  color-scheme: light;
+}
+
 body[data-theme="dark"] {
+  color-scheme: dark;
   --color-bg: #0F1115;
   --color-surface: #1C2028;
   --color-accent: #6EA8FE;
   --color-text: #E6E8EC;
+}
+
+body[data-theme="blue"] {
+  color-scheme: light;
+  --color-bg: #C7D9F0;
+  --color-surface: #ADC7E6;
+  --color-accent: #245A94;
+  --color-text: #1D3047;
+}
+
+body[data-theme="pink"] {
+  color-scheme: light;
+  --color-bg: #F0CAD8;
+  --color-surface: #E3B1C4;
+  --color-accent: #A51E54;
+  --color-text: #3F1D2D;
+}
+
+body[data-theme="sepia"] {
+  color-scheme: light;
+  --color-bg: #DCCAA8;
+  --color-surface: #CBB58F;
+  --color-accent: #754B25;
+  --color-text: #3C2B1A;
 }

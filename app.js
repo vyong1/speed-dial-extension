@@ -2,6 +2,7 @@ const STORAGE_KEY = "speedDials";
 const THEME_KEY = "speedDialTheme";
 const DIAL_SIZE_KEY = "speedDialSize";
 const DIAL_SIZES = ["small", "medium", "large"];
+const THEMES = ["light", "dark", "blue", "pink", "sepia"];
 
 const defaultDials = [
   { id: "google", name: "Google", url: "https://www.google.com/" },
@@ -18,9 +19,7 @@ const iconUrlInput = document.getElementById("iconUrlInput");
 const logoLookupButton = document.getElementById("logoLookupButton");
 const iconFileInput = document.getElementById("iconFileInput");
 const formError = document.getElementById("formError");
-const themeButton = document.getElementById("themeButton");
-const themeIcon = document.getElementById("themeIcon");
-const themeLabel = document.getElementById("themeLabel");
+const themeSelect = document.getElementById("themeSelect");
 const menu = document.getElementById("menu");
 const menuButton = document.getElementById("menuButton");
 const menuDropdown = document.getElementById("menuDropdown");
@@ -106,13 +105,14 @@ function getStorage() {
   };
 }
 
+function normalizeTheme(theme) {
+  return THEMES.includes(theme) ? theme : "light";
+}
+
 function applyTheme(theme) {
-  const selectedTheme = theme === "dark" ? "dark" : "light";
+  const selectedTheme = normalizeTheme(theme);
   document.body.dataset.theme = selectedTheme;
-  themeIcon.textContent = selectedTheme === "dark" ? "\u2600" : "\u263D";
-  const nextTheme = selectedTheme === "dark" ? "light" : "dark";
-  themeLabel.textContent = `${nextTheme[0].toUpperCase()}${nextTheme.slice(1)} theme`;
-  themeButton.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
+  themeSelect.value = selectedTheme;
 }
 
 function normalizeDialSize(size) {
@@ -135,11 +135,10 @@ async function loadTheme(storage) {
   return stored;
 }
 
-themeButton.addEventListener("click", async () => {
-  const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
-  applyTheme(nextTheme);
-  await getStorage().set({ [THEME_KEY]: nextTheme });
-  closeMenu();
+themeSelect.addEventListener("change", async () => {
+  const selectedTheme = normalizeTheme(themeSelect.value);
+  applyTheme(selectedTheme);
+  await getStorage().set({ [THEME_KEY]: selectedTheme });
 });
 
 dialSizeButtons.addEventListener("click", async event => {

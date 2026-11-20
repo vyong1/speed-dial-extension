@@ -24,7 +24,10 @@ REQ_UI_7. Users shall be able to specify the size of dials
 # Requirements (Theme)
 REQ_THEME_1. The page shall have a light theme
 REQ_THEME_2. The page shall have a dark theme
-REQ_THEME_3. Users shall be able to toggle between themes
+REQ_THEME_3. The page shall have a blue theme
+REQ_THEME_4. The page shall have a pink theme
+REQ_THEME_5. The page shall have a sepia theme
+REQ_THEME_6. Users shall be able to toggle between themes
 
 # Requirements (Persistence)
 REQ_PERSIST_1. Speed dials shall be persist between browser restarts
