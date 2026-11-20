@@ -15,6 +15,7 @@ REQ_UI_1. A speed dial shall be a clickable icon representing the webpage
 REQ_UI_2. The user shall be required to confirm for deleting speed dials
 REQ_UI_3. Users shall be able to import and export all the speed dials
 REQ_UI_4. Users shall be able to specify an icon for the speed dial
+REQ_UI_5. Users shall be allowed to upload a custom background image
 
 # Requirements (Edit Mode)
 REQ_EDIT_1. Users shall be able to toggle between edit mode and normal mode
@@ -38,5 +39,6 @@ REQ_PERSIST_1. Speed dials shall be persist between browser restarts
 REQ_PERSIST_2. Speed dial ordering shall persist between browser restarts
 REQ_PERSIST_3. Theme selection shall persist between browser restarts
 REQ_PERSIST_4. Speed dial sizing shall persist between browser restarts
+REQ_PERSIST_5. Background image shall persist between browser restarts
 
 

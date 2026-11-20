@@ -1,8 +1,13 @@
 const STORAGE_KEY = "speedDials";
 const THEME_KEY = "speedDialTheme";
 const DIAL_SIZE_KEY = "speedDialSize";
+const BACKGROUND_IMAGE_KEY = "speedDialBackgroundImage";
+const BACKGROUND_DATABASE_NAME = "speedDialBackgrounds";
+const BACKGROUND_STORE_NAME = "images";
+const BACKGROUND_IMAGE_ID = "pageBackground";
 const DIAL_SIZES = ["small", "medium", "large"];
 const THEMES = ["light", "dark", "blue", "pink", "sepia"];
+const BACKGROUND_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 
 const defaultDials = [
   { id: "google", name: "Google", url: "https://www.google.com/" },
@@ -27,6 +32,10 @@ const submitButton = form.querySelector(".primary-button");
 const importButton = document.getElementById("importButton");
 const exportButton = document.getElementById("exportButton");
 const importInput = document.getElementById("importInput");
+const backgroundImageButton = document.getElementById("backgroundImageButton");
+const backgroundImageInput = document.getElementById("backgroundImageInput");
+const removeBackgroundButton = document.getElementById("removeBackgroundButton");
+const backgroundImageStatus = document.getElementById("backgroundImageStatus");
 const dialSizeButtons = document.getElementById("dialSizeButtons");
 const sizeInput = document.getElementById("sizeInput");
 const addButton = document.getElementById("addButton");
@@ -36,6 +45,7 @@ let dials = [];
 let editingId = null;
 let draggedDialId = null;
 let editMode = false;
+let backgroundImageObjectUrl = null;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -80,7 +90,7 @@ function readIconFile(file) {
 function getStorage() {
   if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
     return {
-      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY, DIAL_SIZE_KEY], result => resolve(result))),
+      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY, DIAL_SIZE_KEY, BACKGROUND_IMAGE_KEY], result => resolve(result))),
       set: value => new Promise(resolve => chrome.storage.local.set(value, resolve))
     };
   }
@@ -89,7 +99,8 @@ function getStorage() {
     get: () => Promise.resolve({
       [STORAGE_KEY]: JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
       [THEME_KEY]: localStorage.getItem(THEME_KEY),
-      [DIAL_SIZE_KEY]: localStorage.getItem(DIAL_SIZE_KEY)
+      [DIAL_SIZE_KEY]: localStorage.getItem(DIAL_SIZE_KEY),
+      [BACKGROUND_IMAGE_KEY]: localStorage.getItem(BACKGROUND_IMAGE_KEY)
     }),
     set: value => {
       if (value[STORAGE_KEY] !== undefined) {
@@ -104,6 +115,149 @@ function getStorage() {
       return Promise.resolve();
     }
   };
+}
+
+function openBackgroundDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(BACKGROUND_DATABASE_NAME, 1);
+    request.onupgradeneeded = () => {
+      if (!request.result.objectStoreNames.contains(BACKGROUND_STORE_NAME)) {
+        request.result.createObjectStore(BACKGROUND_STORE_NAME);
+      }
+    };
+    request.onsuccess = () => {
+      if (blocked) {
+        request.result.close();
+      } else {
+        resolve(request.result);
+      }
+    };
+    request.onerror = () => reject(request.error || new Error("Could not open background image storage."));
+    let blocked = false;
+    request.onblocked = () => {
+      blocked = true;
+      reject(new Error("Background image storage is blocked by another tab."));
+    };
+  });
+}
+
+function readBackgroundImageFromDatabase(database) {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(BACKGROUND_STORE_NAME, "readonly");
+    const request = transaction.objectStore(BACKGROUND_STORE_NAME).get(BACKGROUND_IMAGE_ID);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error || new Error("Could not read the saved background image."));
+    transaction.onabort = () => reject(transaction.error || new Error("Could not read the saved background image."));
+  });
+}
+
+function writeBackgroundImageToDatabase(database, image) {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction(BACKGROUND_STORE_NAME, "readwrite");
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error || new Error("Could not save the background image."));
+    transaction.onabort = () => reject(transaction.error || new Error("Could not save the background image."));
+    transaction.objectStore(BACKGROUND_STORE_NAME).put(image, BACKGROUND_IMAGE_ID);
+  });
+}
+
+async function saveBackgroundImage(image) {
+  const database = await openBackgroundDatabase();
+  try {
+    await writeBackgroundImageToDatabase(database, image);
+  } finally {
+    database.close();
+  }
+}
+
+async function deleteBackgroundImage() {
+  const database = await openBackgroundDatabase();
+  try {
+    await new Promise((resolve, reject) => {
+      const transaction = database.transaction(BACKGROUND_STORE_NAME, "readwrite");
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error || new Error("Could not remove the background image."));
+      transaction.onabort = () => reject(transaction.error || new Error("Could not remove the background image."));
+      transaction.objectStore(BACKGROUND_STORE_NAME).delete(BACKGROUND_IMAGE_ID);
+    });
+  } finally {
+    database.close();
+  }
+}
+
+function applyBackgroundImage(image) {
+  if (backgroundImageObjectUrl) {
+    URL.revokeObjectURL(backgroundImageObjectUrl);
+    backgroundImageObjectUrl = null;
+  }
+  if (image instanceof Blob) {
+    backgroundImageObjectUrl = URL.createObjectURL(image);
+  }
+  document.body.style.setProperty(
+    "--background-image",
+    backgroundImageObjectUrl ? `url("${backgroundImageObjectUrl}")` : "none"
+  );
+  removeBackgroundButton.disabled = !backgroundImageObjectUrl;
+}
+
+function validateBackgroundImage(file) {
+  if (!BACKGROUND_IMAGE_TYPES.includes(file.type)) {
+    throw new Error("Choose a PNG, JPEG, WebP, or GIF image.");
+  }
+  return file;
+}
+
+function legacyBackgroundImageToBlob(image) {
+  const match = /^data:image\/(png|jpeg|webp|gif);base64,([A-Za-z0-9+/]*={0,2})$/i.exec(image);
+  if (!match) {
+    throw new Error("The saved background image could not be migrated.");
+  }
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: `image/${match[1].toLowerCase()}` });
+}
+
+async function removeLegacyBackgroundImage() {
+  if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
+    await new Promise((resolve, reject) => {
+      chrome.storage.local.remove(BACKGROUND_IMAGE_KEY, () => {
+        const error = chrome.runtime.lastError;
+        if (error) {
+          reject(new Error(error.message));
+        } else {
+          resolve();
+        }
+      });
+    });
+  } else {
+    localStorage.removeItem(BACKGROUND_IMAGE_KEY);
+  }
+}
+
+async function loadBackgroundImage(legacyImage) {
+  const database = await openBackgroundDatabase();
+  let image;
+  try {
+    image = await readBackgroundImageFromDatabase(database);
+  } finally {
+    database.close();
+  }
+
+  if (!image && legacyImage) {
+    image = legacyBackgroundImageToBlob(legacyImage);
+    await saveBackgroundImage(image);
+  }
+  if (legacyImage) {
+    try {
+      await removeLegacyBackgroundImage();
+    } catch (error) {
+      backgroundImageStatus.textContent = `Background loaded, but the old copy could not be removed: ${error.message}`;
+    }
+  }
+  return image;
 }
 
 function normalizeTheme(theme) {
@@ -443,6 +597,39 @@ importButton.addEventListener("click", () => {
   importInput.click();
 });
 
+backgroundImageButton.addEventListener("click", () => {
+  backgroundImageStatus.textContent = "";
+  backgroundImageInput.click();
+});
+
+backgroundImageInput.addEventListener("change", async () => {
+  const file = backgroundImageInput.files[0];
+  if (!file) return;
+
+  backgroundImageStatus.textContent = "";
+  try {
+    const image = validateBackgroundImage(file);
+    await saveBackgroundImage(image);
+    applyBackgroundImage(image);
+    backgroundImageStatus.textContent = "Background image updated.";
+  } catch (error) {
+    backgroundImageStatus.textContent = error.message || "Could not save the background image.";
+  } finally {
+    backgroundImageInput.value = "";
+  }
+});
+
+removeBackgroundButton.addEventListener("click", async () => {
+  backgroundImageStatus.textContent = "";
+  try {
+    await deleteBackgroundImage();
+    applyBackgroundImage(null);
+    backgroundImageStatus.textContent = "Background image removed.";
+  } catch (error) {
+    backgroundImageStatus.textContent = error.message || "Could not remove the background image.";
+  }
+});
+
 importInput.addEventListener("change", async () => {
   const file = importInput.files[0];
   if (!file) return;
@@ -481,8 +668,17 @@ importInput.addEventListener("change", async () => {
 
 async function initialize() {
   const storage = getStorage();
-  await loadTheme(storage);
+  const stored = await loadTheme(storage);
+  try {
+    applyBackgroundImage(await loadBackgroundImage(stored[BACKGROUND_IMAGE_KEY]));
+  } catch (error) {
+    backgroundImageStatus.textContent = error.message || "Could not load the saved background image.";
+  }
   await loadDials();
 }
 
 initialize();
+
+window.addEventListener("unload", () => {
+  if (backgroundImageObjectUrl) URL.revokeObjectURL(backgroundImageObjectUrl);
+});

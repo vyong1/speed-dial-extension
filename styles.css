@@ -12,6 +12,10 @@ body {
   min-height: 100vh;
   margin: 0;
   background: var(--color-bg);
+  background-image: var(--background-image, none);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
   color: var(--color-text);
 }
 
@@ -35,7 +39,7 @@ body {
 .page-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 32px;
 }
 
@@ -115,10 +119,22 @@ body {
   font-size: 14px;
 }
 
-.menu-item:hover,
-.menu-item:focus-visible {
+.menu-item:not(:disabled):hover,
+.menu-item:not(:disabled):focus-visible {
   background: var(--color-accent);
   color: var(--color-bg);
+}
+
+.menu-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.menu-status {
+  margin: 0;
+  padding: 4px 10px;
+  color: var(--color-text);
+  font-size: 12px;
 }
 
 .menu-theme-control,
@@ -512,7 +528,7 @@ body:not(.edit-mode) .add-button {
 }
 
 body[data-theme="dark"] {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
   color: var(--color-text);
 }
 
@@ -563,7 +579,7 @@ body[data-theme="dark"] .dialog input:not([type="file"]) {
 }
 
 body[data-theme="light"] {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
   color: var(--color-text);
 }
 

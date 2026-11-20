@@ -5,6 +5,9 @@ collection. Dials can be added, edited, or deleted.
 Added dials and the selected theme persist across Chrome restarts. The page
 includes light, dark (the default), blue, pink, and sepia themes, selected from the header
 hamburger menu's theme dropdown.
+Use **Upload background** in the menu to choose a PNG, JPEG, WebP, or GIF image
+of any size. The background image is saved across browser restarts and can be
+removed from the same menu.
 Speed dial names can be edited from the pencil button shown on each dial. Use
 Import and Export in the same menu to back up or restore all speed dials as JSON.
 Use the Edit button in the header to enter edit mode. Edit mode enables dial
