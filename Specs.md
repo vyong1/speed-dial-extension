@@ -31,6 +31,7 @@ REQ_THEME_3. The page shall have a blue theme
 REQ_THEME_4. The page shall have a pink theme
 REQ_THEME_5. The page shall have a sepia theme
 REQ_THEME_6. Users shall be able to toggle between themes
+REQ_THEME_7. The default theme shall be the dark theme
 
 # Requirements (Persistence)
 REQ_PERSIST_1. Speed dials shall be persist between browser restarts

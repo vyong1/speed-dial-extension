@@ -3,7 +3,7 @@
 A Chrome extension that replaces the New Tab page with a customizable speed dial
 collection. Dials can be added, edited, or deleted.
 Added dials and the selected theme persist across Chrome restarts. The page
-includes light, dark, blue, pink, and sepia themes, selected from the header
+includes light, dark (the default), blue, pink, and sepia themes, selected from the header
 hamburger menu's theme dropdown.
 Speed dial names can be edited from the pencil button shown on each dial. Use
 Import and Export in the same menu to back up or restore all speed dials as JSON.

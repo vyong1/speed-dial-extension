@@ -107,7 +107,7 @@ function getStorage() {
 }
 
 function normalizeTheme(theme) {
-  return THEMES.includes(theme) ? theme : "light";
+  return THEMES.includes(theme) ? theme : "dark";
 }
 
 function applyTheme(theme) {
@@ -146,7 +146,7 @@ editModeButton.addEventListener("click", () => {
 
 async function loadTheme(storage) {
   const stored = await storage.get();
-  applyTheme(stored[THEME_KEY] || "light");
+  applyTheme(stored[THEME_KEY] || "dark");
   applyDialSize(stored[DIAL_SIZE_KEY]);
   return stored;
 }
