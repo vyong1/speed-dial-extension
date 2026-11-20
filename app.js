@@ -144,6 +144,7 @@ function renderDials() {
     deleteButton.textContent = "\u00d7";
     deleteButton.setAttribute("aria-label", `Delete ${dial.name}`);
     deleteButton.addEventListener("click", async () => {
+      if (!window.confirm(`Delete "${dial.name}"?`)) return;
       dials = dials.filter(item => item.id !== dial.id);
       await saveDials();
     });

@@ -146,8 +146,8 @@ h1 {
 
 .edit-button {
   position: absolute;
-  top: -8px;
-  left: 4px;
+  top: 24px;
+  right: 4px;
   width: 28px;
   height: 28px;
   border: 0;
