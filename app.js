@@ -12,9 +12,15 @@ const backdrop = document.getElementById("dialogBackdrop");
 const form = document.getElementById("dialForm");
 const nameInput = document.getElementById("nameInput");
 const urlInput = document.getElementById("urlInput");
+const iconUrlInput = document.getElementById("iconUrlInput");
+const iconFileInput = document.getElementById("iconFileInput");
 const formError = document.getElementById("formError");
 const themeButton = document.getElementById("themeButton");
 const themeIcon = document.getElementById("themeIcon");
+const themeLabel = document.getElementById("themeLabel");
+const menu = document.getElementById("menu");
+const menuButton = document.getElementById("menuButton");
+const menuDropdown = document.getElementById("menuDropdown");
 const dialogTitle = document.getElementById("dialogTitle");
 const submitButton = form.querySelector(".primary-button");
 const importButton = document.getElementById("importButton");
@@ -32,6 +38,29 @@ function normalizeUrl(value) {
     throw new Error("Enter a valid web address.");
   }
   return url.href;
+}
+
+function normalizeIconUrl(value) {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+  const url = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`);
+  if (!["http:", "https:"].includes(url.protocol)) {
+    throw new Error("Enter a valid icon URL.");
+  }
+  return url.href;
+}
+
+function readIconFile(file) {
+  return new Promise((resolve, reject) => {
+    if (file.size > 750 * 1024) {
+      reject(new Error("The icon image must be smaller than 750 KB."));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Could not read the icon image."));
+    reader.readAsDataURL(file);
+  });
 }
 
 function getStorage() {
@@ -63,8 +92,9 @@ function applyTheme(theme) {
   const selectedTheme = theme === "dark" ? "dark" : "light";
   document.body.dataset.theme = selectedTheme;
   themeIcon.textContent = selectedTheme === "dark" ? "\u2600" : "\u263D";
-  themeButton.setAttribute("aria-label", `Switch to ${selectedTheme === "dark" ? "light" : "dark"} theme`);
-  themeButton.title = `Switch to ${selectedTheme === "dark" ? "light" : "dark"} theme`;
+  const nextTheme = selectedTheme === "dark" ? "light" : "dark";
+  themeLabel.textContent = `${nextTheme[0].toUpperCase()}${nextTheme.slice(1)} theme`;
+  themeButton.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
 }
 
 async function loadTheme(storage) {
@@ -77,6 +107,26 @@ themeButton.addEventListener("click", async () => {
   const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
   applyTheme(nextTheme);
   await getStorage().set({ [THEME_KEY]: nextTheme });
+  closeMenu();
+});
+
+function closeMenu() {
+  menuDropdown.hidden = true;
+  menuButton.setAttribute("aria-expanded", "false");
+}
+
+menuButton.addEventListener("click", () => {
+  const opening = menuDropdown.hidden;
+  menuDropdown.hidden = !opening;
+  menuButton.setAttribute("aria-expanded", String(opening));
+});
+
+document.addEventListener("click", event => {
+  if (!menu.contains(event.target)) closeMenu();
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeMenu();
 });
 
 async function loadDials() {
@@ -179,6 +229,7 @@ function openEditDialog(dial) {
   submitButton.textContent = "Save";
   nameInput.value = dial.name;
   urlInput.value = dial.url;
+  iconUrlInput.value = dial.icon && !dial.icon.startsWith("data:image/") ? dial.icon : "";
   backdrop.hidden = false;
   nameInput.focus();
   nameInput.select();
@@ -219,13 +270,35 @@ form.addEventListener("submit", async event => {
     return;
   }
 
+  let icon = "";
+  try {
+    icon = normalizeIconUrl(iconUrlInput.value);
+  } catch (error) {
+    formError.textContent = error.message;
+    iconUrlInput.focus();
+    return;
+  }
+
+  if (iconFileInput.files[0]) {
+    try {
+      icon = await readIconFile(iconFileInput.files[0]);
+    } catch (error) {
+      formError.textContent = error.message;
+      iconFileInput.focus();
+      return;
+    }
+  }
+
   if (editingId) {
-    dials = dials.map(dial => dial.id === editingId ? { ...dial, name, url } : dial);
+    dials = dials.map(dial => dial.id === editingId
+      ? { ...dial, name, url, icon: icon || undefined }
+      : dial);
   } else {
     dials.push({
       id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
       name,
-      url
+      url,
+      icon: icon || undefined
     });
   }
   await saveDials();
@@ -233,7 +306,8 @@ form.addEventListener("submit", async event => {
 });
 
 exportButton.addEventListener("click", () => {
-  const exportData = dials.map(({ id, name, url }) => ({ id, name, url }));
+  closeMenu();
+  const exportData = dials.map(({ id, name, url, icon }) => ({ id, name, url, icon }));
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
   const downloadUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -245,7 +319,10 @@ exportButton.addEventListener("click", () => {
   URL.revokeObjectURL(downloadUrl);
 });
 
-importButton.addEventListener("click", () => importInput.click());
+importButton.addEventListener("click", () => {
+  closeMenu();
+  importInput.click();
+});
 
 importInput.addEventListener("change", async () => {
   const file = importInput.files[0];
@@ -266,7 +343,12 @@ importInput.addEventListener("change", async () => {
       return {
         id: typeof dial.id === "string" && dial.id ? dial.id : String(Date.now() + index),
         name,
-        url: normalizeUrl(dial.url)
+        url: normalizeUrl(dial.url),
+        icon: typeof dial.icon === "string" && dial.icon
+          ? dial.icon.startsWith("data:image/")
+            ? dial.icon
+            : normalizeIconUrl(dial.icon)
+          : undefined
       };
     });
     await saveDials();

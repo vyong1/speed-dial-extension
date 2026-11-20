@@ -11,11 +11,19 @@
       <header class="page-header">
         <h1>Speed Dial</h1>
         <div class="header-actions">
-          <button id="themeButton" class="theme-button" type="button" aria-label="Switch to dark theme" title="Switch theme">
-            <span id="themeIcon" aria-hidden="true">&#9790;</span>
-          </button>
-          <button id="importButton" class="tool-button" type="button">Import</button>
-          <button id="exportButton" class="tool-button" type="button">Export</button>
+          <div id="menu" class="menu">
+            <button id="menuButton" class="menu-button" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false">
+              <span aria-hidden="true">&#9776;</span>
+            </button>
+            <div id="menuDropdown" class="menu-dropdown" role="menu" hidden>
+              <button id="themeButton" class="menu-item" type="button" role="menuitem" aria-label="Switch to dark theme">
+                <span id="themeIcon" aria-hidden="true">&#9790;</span>
+                <span id="themeLabel">Dark theme</span>
+              </button>
+              <button id="importButton" class="menu-item" type="button" role="menuitem">Import</button>
+              <button id="exportButton" class="menu-item" type="button" role="menuitem">Export</button>
+            </div>
+          </div>
           <input id="importInput" type="file" accept=".json,application/json" hidden>
           <button id="addButton" class="add-button" type="button" aria-label="Add a speed dial">
             <span aria-hidden="true">+</span>
@@ -35,6 +43,12 @@
 
           <label for="urlInput">Web address</label>
           <input id="urlInput" name="url" type="text" inputmode="url" required placeholder="https://example.com">
+
+          <label for="iconUrlInput">Icon URL (optional)</label>
+          <input id="iconUrlInput" name="iconUrl" type="url" placeholder="https://example.com/icon.png">
+
+          <label for="iconFileInput">Or upload an icon (optional)</label>
+          <input id="iconFileInput" name="iconFile" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp">
 
           <p id="formError" class="form-error" role="alert"></p>
 

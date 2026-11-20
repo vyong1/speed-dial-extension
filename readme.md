@@ -3,9 +3,11 @@
 A Chrome extension that replaces the New Tab page with a customizable speed dial
 collection. Dials use each site's favicon and can be added, edited, or deleted.
 Added dials and the selected theme persist across Chrome restarts. The page
-includes light and dark themes with a toggle in the header. Speed dial names
-can be edited from the pencil button shown on each dial. Use Import and Export
-in the header to back up or restore all speed dials as JSON.
+includes light and dark themes with a toggle in the header hamburger menu.
+Speed dial names can be edited from the pencil button shown on each dial. Use
+Import and Export in the same menu to back up or restore all speed dials as JSON.
+Speed dial icons can be set with an image URL or an uploaded image; otherwise,
+the extension uses the website favicon.
 
 ## Load the extension in Chrome
 
