@@ -41,6 +41,13 @@ function normalizeUrl(value) {
   return url.href;
 }
 
+function secondLevelDomain(url) {
+  const hostname = new URL(url).hostname.replace(/^www\./i, "");
+  const labels = hostname.split(".");
+  const domain = labels.length > 1 ? labels[labels.length - 2] : hostname;
+  return domain.charAt(0).toUpperCase() + domain.slice(1);
+}
+
 function normalizeIconUrl(value) {
   const trimmed = value.trim();
   if (!trimmed) return "";
@@ -257,7 +264,7 @@ function openDialog() {
   dialogTitle.textContent = "Add speed dial";
   submitButton.textContent = "Add";
   backdrop.hidden = false;
-  nameInput.focus();
+  urlInput.focus();
 }
 
 function openEditDialog(dial) {
@@ -270,8 +277,8 @@ function openEditDialog(dial) {
   urlInput.value = dial.url;
   iconUrlInput.value = dial.icon && !dial.icon.startsWith("data:image/") ? dial.icon : "";
   backdrop.hidden = false;
-  nameInput.focus();
-  nameInput.select();
+  urlInput.focus();
+  urlInput.select();
 }
 
 function closeDialog() {
@@ -294,11 +301,6 @@ form.addEventListener("submit", async event => {
   formError.textContent = "";
 
   const name = nameInput.value.trim();
-  if (!name) {
-    formError.textContent = "Enter a name.";
-    nameInput.focus();
-    return;
-  }
 
   let url;
   try {
@@ -308,6 +310,8 @@ form.addEventListener("submit", async event => {
     urlInput.focus();
     return;
   }
+
+  const dialName = name || secondLevelDomain(url);
 
   let icon = "";
   try {
@@ -330,12 +334,12 @@ form.addEventListener("submit", async event => {
 
   if (editingId) {
     dials = dials.map(dial => dial.id === editingId
-      ? { ...dial, name, url, icon: icon || undefined }
+      ? { ...dial, name: dialName, url, icon: icon || undefined }
       : dial);
   } else {
     dials.push({
       id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
-      name,
+      name: dialName,
       url,
       icon: icon || undefined
     });

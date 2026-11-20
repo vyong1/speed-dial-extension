@@ -10,7 +10,7 @@
   <body>
     <main class="page">
       <header class="page-header">
-        <h1>Speed Dial</h1>
+        <h1>Home</h1>
         <div class="header-actions">
           <div id="menu" class="menu">
             <button id="menuButton" class="menu-button" type="button" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false">
@@ -39,11 +39,11 @@
       <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
         <h2 id="dialogTitle">Add speed dial</h2>
         <form id="dialForm">
-          <label for="nameInput">Name</label>
-          <input id="nameInput" name="name" type="text" maxlength="40" required placeholder="Example">
-
-          <label for="urlInput">Web address</label>
+          <label for="urlInput">Web Address</label>
           <input id="urlInput" name="url" type="text" inputmode="url" required placeholder="https://example.com">
+
+          <label for="nameInput">Name (optional)</label>
+          <input id="nameInput" name="name" type="text" maxlength="40" placeholder="example">
 
           <label for="iconUrlInput">Icon URL (optional)</label>
           <input id="iconUrlInput" name="iconUrl" type="url" placeholder="https://example.com/icon.png">
