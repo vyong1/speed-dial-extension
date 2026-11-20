@@ -13,6 +13,7 @@ const form = document.getElementById("dialForm");
 const nameInput = document.getElementById("nameInput");
 const urlInput = document.getElementById("urlInput");
 const iconUrlInput = document.getElementById("iconUrlInput");
+const logoLookupButton = document.getElementById("logoLookupButton");
 const iconFileInput = document.getElementById("iconFileInput");
 const formError = document.getElementById("formError");
 const themeButton = document.getElementById("themeButton");
@@ -246,6 +247,7 @@ function openDialog() {
   form.reset();
   formError.textContent = "";
   editingId = null;
+  logoLookupButton.hidden = true;
   dialogTitle.textContent = "Add speed dial";
   submitButton.textContent = "Add";
   backdrop.hidden = false;
@@ -256,6 +258,7 @@ function openEditDialog(dial) {
   form.reset();
   formError.textContent = "";
   editingId = dial.id;
+  logoLookupButton.hidden = false;
   dialogTitle.textContent = "Edit speed dial";
   submitButton.textContent = "Save";
   nameInput.value = dial.name;
@@ -265,6 +268,28 @@ function openEditDialog(dial) {
   urlInput.focus();
   urlInput.select();
 }
+
+logoLookupButton.addEventListener("click", () => {
+  const webAddress = urlInput.value.trim();
+  if (!webAddress) {
+    formError.textContent = "Type a web address first.";
+    urlInput.focus();
+    return;
+  }
+
+  let domain;
+  try {
+    domain = new URL(normalizeUrl(webAddress)).hostname.replace(/^www\./i, "");
+  } catch (error) {
+    formError.textContent = error.message || "Enter a valid web address.";
+    urlInput.focus();
+    return;
+  }
+
+  formError.textContent = "";
+  const query = encodeURIComponent(`${domain} logo`);
+  window.open(`https://www.google.com/search?q=${query}`, "_blank", "noopener,noreferrer");
+});
 
 function closeDialog() {
   backdrop.hidden = true;

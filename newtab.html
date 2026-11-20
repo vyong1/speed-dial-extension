@@ -46,7 +46,15 @@
           <input id="nameInput" name="name" type="text" maxlength="40" placeholder="example">
 
           <label for="iconUrlInput">Icon URL (optional)</label>
-          <input id="iconUrlInput" name="iconUrl" type="url" placeholder="https://example.com/icon.png">
+          <div class="input-with-action">
+            <input id="iconUrlInput" name="iconUrl" type="url" placeholder="https://example.com/icon.png">
+            <button id="logoLookupButton" class="logo-lookup-button" type="button" aria-label="Look up logo" title="Look up logo" hidden>
+              <svg aria-hidden="true" viewBox="0 0 24 24" focusable="false">
+                <circle cx="10.8" cy="10.8" r="6.3"></circle>
+                <path d="m15.5 15.5 5 5"></path>
+              </svg>
+            </button>
+          </div>
 
           <label for="iconFileInput">Or upload an icon (optional)</label>
           <input id="iconFileInput" name="iconFile" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp">
