@@ -6,5 +6,11 @@
   "permissions": ["storage"],
   "chrome_url_overrides": {
     "newtab": "newtab.html"
+  },
+  "icons": {
+    "16": "favicon_16.png",
+    "32": "favicon_32.png",
+    "48": "favicon_48.png",
+    "128": "favicon_128.png"
   }
 }
