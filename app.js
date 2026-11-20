@@ -197,6 +197,7 @@ function applyBackgroundImage(image) {
     "--background-image",
     backgroundImageObjectUrl ? `url("${backgroundImageObjectUrl}")` : "none"
   );
+  document.body.classList.toggle("has-background-image", Boolean(backgroundImageObjectUrl));
   removeBackgroundButton.disabled = !backgroundImageObjectUrl;
 }
 
