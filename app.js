@@ -2,6 +2,7 @@ const STORAGE_KEY = "speedDials";
 const THEME_KEY = "speedDialTheme";
 const DIAL_SIZE_KEY = "speedDialSize";
 const BACKGROUND_IMAGE_KEY = "speedDialBackgroundImage";
+const BACKGROUND_IMAGE_HIDDEN_KEY = "speedDialBackgroundImageHidden";
 const BACKGROUND_DATABASE_NAME = "speedDialBackgrounds";
 const BACKGROUND_STORE_NAME = "images";
 const BACKGROUND_IMAGE_ID = "pageBackground";
@@ -34,6 +35,7 @@ const exportButton = document.getElementById("exportButton");
 const importInput = document.getElementById("importInput");
 const backgroundImageButton = document.getElementById("backgroundImageButton");
 const backgroundImageInput = document.getElementById("backgroundImageInput");
+const toggleBackgroundButton = document.getElementById("toggleBackgroundButton");
 const removeBackgroundButton = document.getElementById("removeBackgroundButton");
 const backgroundImageStatus = document.getElementById("backgroundImageStatus");
 const dialSizeButtons = document.getElementById("dialSizeButtons");
@@ -45,6 +47,7 @@ let editingId = null;
 let draggedDialId = null;
 let editMode = false;
 let backgroundImageObjectUrl = null;
+let backgroundImageHidden = false;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -89,8 +92,15 @@ function readIconFile(file) {
 function getStorage() {
   if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
     return {
-      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY, DIAL_SIZE_KEY, BACKGROUND_IMAGE_KEY], result => resolve(result))),
-      set: value => new Promise(resolve => chrome.storage.local.set(value, resolve))
+      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY, DIAL_SIZE_KEY, BACKGROUND_IMAGE_KEY, BACKGROUND_IMAGE_HIDDEN_KEY], result => resolve(result))),
+      set: value => new Promise((resolve, reject) => chrome.storage.local.set(value, () => {
+        const error = chrome.runtime.lastError;
+        if (error) {
+          reject(new Error(error.message));
+        } else {
+          resolve();
+        }
+      }))
     };
   }
 
@@ -99,7 +109,8 @@ function getStorage() {
       [STORAGE_KEY]: JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
       [THEME_KEY]: localStorage.getItem(THEME_KEY),
       [DIAL_SIZE_KEY]: localStorage.getItem(DIAL_SIZE_KEY),
-      [BACKGROUND_IMAGE_KEY]: localStorage.getItem(BACKGROUND_IMAGE_KEY)
+      [BACKGROUND_IMAGE_KEY]: localStorage.getItem(BACKGROUND_IMAGE_KEY),
+      [BACKGROUND_IMAGE_HIDDEN_KEY]: localStorage.getItem(BACKGROUND_IMAGE_HIDDEN_KEY)
     }),
     set: value => {
       if (value[STORAGE_KEY] !== undefined) {
@@ -110,6 +121,9 @@ function getStorage() {
       }
       if (value[DIAL_SIZE_KEY] !== undefined) {
         localStorage.setItem(DIAL_SIZE_KEY, value[DIAL_SIZE_KEY]);
+      }
+      if (value[BACKGROUND_IMAGE_HIDDEN_KEY] !== undefined) {
+        localStorage.setItem(BACKGROUND_IMAGE_HIDDEN_KEY, value[BACKGROUND_IMAGE_HIDDEN_KEY]);
       }
       return Promise.resolve();
     }
@@ -196,8 +210,16 @@ function applyBackgroundImage(image) {
     "--background-image",
     backgroundImageObjectUrl ? `url("${backgroundImageObjectUrl}")` : "none"
   );
-  document.body.classList.toggle("has-background-image", Boolean(backgroundImageObjectUrl));
+  updateBackgroundImageVisibility();
   removeBackgroundButton.disabled = !backgroundImageObjectUrl;
+  toggleBackgroundButton.disabled = !backgroundImageObjectUrl;
+}
+
+function updateBackgroundImageVisibility() {
+  const hasBackgroundImage = Boolean(backgroundImageObjectUrl);
+  document.body.classList.toggle("background-image-hidden", backgroundImageHidden);
+  document.body.classList.toggle("has-background-image", hasBackgroundImage && !backgroundImageHidden);
+  toggleBackgroundButton.textContent = backgroundImageHidden ? "Show" : "Hide";
 }
 
 function validateBackgroundImage(file) {
@@ -613,6 +635,7 @@ backgroundImageInput.addEventListener("change", async () => {
 });
 
 removeBackgroundButton.addEventListener("click", async () => {
+  if (!window.confirm("Delete the saved background image? This cannot be undone.")) return;
   backgroundImageStatus.textContent = "";
   try {
     await deleteBackgroundImage();
@@ -621,6 +644,20 @@ removeBackgroundButton.addEventListener("click", async () => {
   } catch (error) {
     backgroundImageStatus.textContent = error.message || "Could not remove the background image.";
   }
+});
+
+toggleBackgroundButton.addEventListener("click", async () => {
+  backgroundImageHidden = !backgroundImageHidden;
+  updateBackgroundImageVisibility();
+  try {
+    await getStorage().set({ [BACKGROUND_IMAGE_HIDDEN_KEY]: backgroundImageHidden });
+  } catch (error) {
+    backgroundImageHidden = !backgroundImageHidden;
+    updateBackgroundImageVisibility();
+    backgroundImageStatus.textContent = error.message || "Could not update background visibility.";
+    return;
+  }
+  backgroundImageStatus.textContent = backgroundImageHidden ? "Background image hidden." : "Background image shown.";
 });
 
 importInput.addEventListener("change", async () => {
@@ -661,6 +698,7 @@ importInput.addEventListener("change", async () => {
 async function initialize() {
   const storage = getStorage();
   const stored = await loadTheme(storage);
+  backgroundImageHidden = stored[BACKGROUND_IMAGE_HIDDEN_KEY] === true || stored[BACKGROUND_IMAGE_HIDDEN_KEY] === "true";
   try {
     applyBackgroundImage(await loadBackgroundImage(stored[BACKGROUND_IMAGE_KEY]));
   } catch (error) {
