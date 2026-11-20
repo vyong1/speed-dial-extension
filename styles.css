@@ -183,15 +183,8 @@ h1 {
   gap: 28px 20px;
 }
 
-body[data-dial-size="small"] {
-  --dial-column-size: 104px;
-  --dial-icon-size: 64px;
-  --dial-icon-radius: 16px;
-  --dial-image-size: 36px;
-  --dial-name-size: 13px;
-}
 
-body[data-dial-size="medium"] {
+body[data-dial-size="small"] {
   --dial-column-size: 128px;
   --dial-icon-size: 88px;
   --dial-icon-radius: 22px;
@@ -199,12 +192,20 @@ body[data-dial-size="medium"] {
   --dial-name-size: 15px;
 }
 
-body[data-dial-size="large"] {
+body[data-dial-size="medium"] {
   --dial-column-size: 152px;
   --dial-icon-size: 112px;
   --dial-icon-radius: 26px;
   --dial-image-size: 64px;
   --dial-name-size: 17px;
+}
+
+body[data-dial-size="large"] {
+  --dial-column-size: 190px;
+  --dial-icon-size: 140px;
+  --dial-icon-radius: 32.5px;
+  --dial-image-size: 80px;
+  --dial-name-size: 21.25px;
 }
 
 .dial {
@@ -259,10 +260,10 @@ body[data-dial-size="large"] {
 }
 
 .dial.dial-large {
-  --dial-icon-size: 112px;
-  --dial-icon-radius: 26px;
-  --dial-image-size: 64px;
-  --dial-name-size: 17px;
+  --dial-icon-size: 140px;
+  --dial-icon-radius: 32.5px;
+  --dial-image-size: 80px;
+  --dial-name-size: 21.25px;
 }
 
 .dial-link:hover .dial-icon,
