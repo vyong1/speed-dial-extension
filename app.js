@@ -37,7 +37,6 @@ const backgroundImageInput = document.getElementById("backgroundImageInput");
 const removeBackgroundButton = document.getElementById("removeBackgroundButton");
 const backgroundImageStatus = document.getElementById("backgroundImageStatus");
 const dialSizeButtons = document.getElementById("dialSizeButtons");
-const sizeInput = document.getElementById("sizeInput");
 const addButton = document.getElementById("addButton");
 const editModeButton = document.getElementById("editModeButton");
 
@@ -364,9 +363,6 @@ function renderDials() {
   dials.forEach(dial => {
     const article = document.createElement("article");
     article.className = "dial";
-    if (DIAL_SIZES.includes(dial.size)) {
-      article.classList.add(`dial-${dial.size}`);
-    }
     article.dataset.dialId = dial.id;
     article.draggable = editMode;
     article.addEventListener("dragstart", event => {
@@ -464,7 +460,6 @@ function openDialog() {
   form.reset();
   formError.textContent = "";
   editingId = null;
-  sizeInput.value = "";
   logoLookupButton.hidden = false;
   dialogTitle.textContent = "Add speed dial";
   submitButton.textContent = "Add";
@@ -476,7 +471,6 @@ function openEditDialog(dial) {
   form.reset();
   formError.textContent = "";
   editingId = dial.id;
-  sizeInput.value = DIAL_SIZES.includes(dial.size) ? dial.size : "";
   logoLookupButton.hidden = false;
   dialogTitle.textContent = "Edit speed dial";
   submitButton.textContent = "Save";
@@ -561,22 +555,16 @@ form.addEventListener("submit", async event => {
     }
   }
 
-  const dialSize = normalizeDialSize(sizeInput.value);
-  const perDialSize = sizeInput.value && DIAL_SIZES.includes(sizeInput.value)
-    ? dialSize
-    : undefined;
-
   if (editingId) {
     dials = dials.map(dial => dial.id === editingId
-      ? { ...dial, name: dialName, url, icon: icon || undefined, size: perDialSize }
+      ? { ...dial, name: dialName, url, icon: icon || undefined }
       : dial);
   } else {
     dials.push({
       id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
       name: dialName,
       url,
-      icon: icon || undefined,
-      size: perDialSize
+      icon: icon || undefined
     });
   }
   await saveDials();
@@ -585,7 +573,7 @@ form.addEventListener("submit", async event => {
 
 exportButton.addEventListener("click", () => {
   closeMenu();
-  const exportData = dials.map(({ id, name, url, icon, size }) => ({ id, name, url, icon, size }));
+  const exportData = dials.map(({ id, name, url, icon }) => ({ id, name, url, icon }));
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
   const downloadUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -659,8 +647,7 @@ importInput.addEventListener("change", async () => {
           ? dial.icon.startsWith("data:image/")
             ? dial.icon
             : normalizeIconUrl(dial.icon)
-          : undefined,
-        size: DIAL_SIZES.includes(dial.size) ? dial.size : undefined
+          : undefined
       };
     });
     await saveDials();

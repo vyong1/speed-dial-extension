@@ -17,6 +17,7 @@ REQ_UI_3. Users shall be able to import and export all the speed dials
 REQ_UI_4. Users shall be able to specify an icon for the speed dial
 REQ_UI_5. Users shall be allowed to upload a custom background image
 REQ_UI_6. Users shall be able to specify the size of dials
+REQ_UI_7. All dials shall be the same size
 
 # Requirements (Edit Mode)
 REQ_EDIT_1. Users shall be able to toggle between edit mode and normal mode
