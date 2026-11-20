@@ -1,6 +1,6 @@
 # Description
 <p>
-This is a Chrome extension that replaces the new tab page with a speed dial page.
+This is a browser extension that replaces the new tab page with a speed dial page.
 Each speed dial is a link with the logo of the website. 
 </p>
 
@@ -10,7 +10,6 @@ REQ_SPEEDDIALS_2. A speed dial shall link to a webpage
 REQ_SPEEDDIALS_3. A speed dial shall be a clickable icon representing the webpage
 REQ_SPEEDDIALS_4. Users shall be able to add speed dials
 REQ_SPEEDDIALS_5. Users shall be able to delete speed dials
-REQ_SPEEDDIALS_6. Added speed dials shall be persist between chrome restarts
 
 # Requirements (UI)
 REQ_UI_1. The user shall be required to confirm for deleting speed dials
@@ -22,3 +21,11 @@ REQ_UI_6. Users shall be able to import and export all the speed dials
 REQ_UI_7. A speed dial's icon shall be the webpage's favicon.ico by default
 REQ_UI_8. Users shall be able to specify an icon for the speed dial
 REQ_UI_9. Users shall be able to reorder speed dials
+
+# Requirements (Persistence)
+REQ_PERSIST_1. Speed dials shall be persist between browser restarts
+REQ_PERSIST_2. Speed dial ordering shall persist between browser restarts
+REQ_PERSIST_3. Theme selection shall persist between browser restarts
+
+
+
