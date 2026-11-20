@@ -21,3 +21,4 @@ REQ_UI_5. Users shall be able to edit the name of a speed dial
 REQ_UI_6. Users shall be able to import and export all the speed dials
 REQ_UI_7. A speed dial's icon shall be the webpage's favicon.ico by default
 REQ_UI_8. Users shall be able to specify an icon for the speed dial
+REQ_UI_9. Users shall be able to reorder speed dials

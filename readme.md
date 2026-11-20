@@ -7,7 +7,7 @@ includes light and dark themes with a toggle in the header hamburger menu.
 Speed dial names can be edited from the pencil button shown on each dial. Use
 Import and Export in the same menu to back up or restore all speed dials as JSON.
 Speed dial icons can be set with an image URL or an uploaded image; otherwise,
-the extension uses the website favicon.
+the extension uses the website favicon. Drag speed dials to reorder them.
 
 ## Load the extension in Chrome
 

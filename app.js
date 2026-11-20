@@ -29,6 +29,7 @@ const importInput = document.getElementById("importInput");
 
 let dials = [];
 let editingId = null;
+let draggedDialId = null;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -160,6 +161,44 @@ function renderDials() {
   dials.forEach(dial => {
     const article = document.createElement("article");
     article.className = "dial";
+    article.dataset.dialId = dial.id;
+    article.draggable = true;
+    article.addEventListener("dragstart", event => {
+      draggedDialId = dial.id;
+      article.classList.add("dragging");
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", dial.id);
+    });
+    article.addEventListener("dragover", event => {
+      if (!draggedDialId || draggedDialId === dial.id) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      grid.querySelectorAll(".drag-over").forEach(item => item.classList.remove("drag-over"));
+      article.classList.add("drag-over");
+    });
+    article.addEventListener("dragleave", event => {
+      if (!article.contains(event.relatedTarget)) article.classList.remove("drag-over");
+    });
+    article.addEventListener("drop", async event => {
+      event.preventDefault();
+      article.classList.remove("drag-over");
+      if (!draggedDialId || draggedDialId === dial.id) return;
+
+      const fromIndex = dials.findIndex(item => item.id === draggedDialId);
+      if (fromIndex === -1) return;
+      const [movedDial] = dials.splice(fromIndex, 1);
+      const targetIndex = dials.findIndex(item => item.id === dial.id);
+      const insertBefore = event.offsetX <= article.offsetWidth / 2;
+      dials.splice(targetIndex + (insertBefore ? 0 : 1), 0, movedDial);
+      draggedDialId = null;
+      await saveDials();
+    });
+    article.addEventListener("dragend", () => {
+      draggedDialId = null;
+      grid.querySelectorAll(".dragging, .drag-over").forEach(item => {
+        item.classList.remove("dragging", "drag-over");
+      });
+    });
 
     const link = document.createElement("a");
     link.className = "dial-link";

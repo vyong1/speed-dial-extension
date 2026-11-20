@@ -134,6 +134,17 @@ h1 {
   position: relative;
   min-width: 0;
   text-align: center;
+  cursor: grab;
+}
+
+.dial.dragging {
+  opacity: 0.45;
+  cursor: grabbing;
+}
+
+.dial.drag-over .dial-icon {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 4px;
 }
 
 .dial-link {
