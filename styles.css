@@ -156,14 +156,25 @@ h1 {
 }
 
 .add-button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--color-accent);
+  width: var(--dial-icon-size);
+  height: var(--dial-icon-size);
+  border-radius: var(--dial-icon-radius);
+  background: var(--color-background);
   color: var(--color-bg);
-  font-size: 32px;
+  font-size: var(--dial-image-size);
+  color: var(--color-accent);
   line-height: 1;
-  box-shadow: 0 3px 10px rgb(26 115 232 / 30%);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.add-button:hover,
+.add-button:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 18px rgb(60 64 67 / 22%);
+}
+
+.dial-grid > .add-button {
+  justify-self: center;
 }
 
 .dial-grid {

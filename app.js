@@ -31,6 +31,7 @@ const exportButton = document.getElementById("exportButton");
 const importInput = document.getElementById("importInput");
 const dialSizeButtons = document.getElementById("dialSizeButtons");
 const sizeInput = document.getElementById("sizeInput");
+const addButton = document.getElementById("addButton");
 
 let dials = [];
 let editingId = null;
@@ -274,6 +275,8 @@ function renderDials() {
     article.append(link, editButton, deleteButton);
     grid.appendChild(article);
   });
+
+  grid.appendChild(addButton);
 }
 
 function openDialog() {
@@ -330,7 +333,7 @@ function closeDialog() {
   backdrop.hidden = true;
 }
 
-document.getElementById("addButton").addEventListener("click", openDialog);
+addButton.addEventListener("click", openDialog);
 document.getElementById("cancelButton").addEventListener("click", closeDialog);
 
 backdrop.addEventListener("click", event => {
