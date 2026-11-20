@@ -36,3 +36,7 @@ To pick up local changes, click the extension's **Reload** button on
 
 The Chrome Web Store requires a developer account and may require additional
 listing assets or disclosures. Follow the Dashboard's current instructions.
+
+
+## Attributions
+<a href="https://www.flaticon.com/free-icons/ui" title="ui icons">Ui icons created by Adrly - Flaticon</a>
