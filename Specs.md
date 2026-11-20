@@ -16,14 +16,14 @@ REQ_UI_2. The user shall be required to confirm for deleting speed dials
 REQ_UI_3. Users shall be able to import and export all the speed dials
 REQ_UI_4. Users shall be able to specify an icon for the speed dial
 REQ_UI_5. Users shall be allowed to upload a custom background image
+REQ_UI_6. Users shall be able to specify the size of dials
 
 # Requirements (Edit Mode)
 REQ_EDIT_1. Users shall be able to toggle between edit mode and normal mode
 REQ_EDIT_2. Users shall be able to edit the name of a speed dial when the page is in edit mode
 REQ_EDIT_3. Users shall be able to reorder speed dials when the page is in edit mode
-REQ_EDIT_4. Users shall be able to specify the size of dials when the page is in edit mode
-REQ_EDIT_5. Users shall be able to add speed dials when the page is in edit mode
-REQ_EDIT_6. Users shall be able to delete speed dials when the page is in edit mode
+REQ_EDIT_4. Users shall be able to add speed dials when the page is in edit mode
+REQ_EDIT_5. Users shall be able to delete speed dials when the page is in edit mode
 
 # Requirements (Theme)
 REQ_THEME_1. The page shall have a light theme

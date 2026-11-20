@@ -148,10 +148,6 @@ body {
   font-size: 14px;
 }
 
-body:not(.edit-mode) .menu-size-control {
-  display: none;
-}
-
 .menu-theme-control select {
   width: 112px;
   height: 30px;
