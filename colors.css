@@ -1,0 +1,14 @@
+/* colors.css */
+:root {
+  --color-bg: #FAFAF7;
+  --color-surface: #EDEBE4;
+  --color-accent: #2F5BEA;
+  --color-text: #1A1C20;
+}
+
+body[data-theme="dark"] {
+  --color-bg: #0F1115;
+  --color-surface: #1C2028;
+  --color-accent: #6EA8FE;
+  --color-text: #E6E8EC;
+}
