@@ -312,7 +312,7 @@ function applyEditMode(enabled) {
   document.body.classList.toggle("edit-mode", editMode);
   editModeButton.setAttribute("aria-pressed", String(editMode));
   editModeButton.title = editMode ? "Exit edit mode" : "Enter edit mode";
-  editModeButton.querySelector(".edit-mode-label").textContent = editMode ? "Done" : "Edit";
+  editModeButton.querySelector(".edit-mode-label").textContent = editMode ? "Done" : "Edit/Add";
   addButton.hidden = !editMode;
   renderDials();
 }
