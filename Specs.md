@@ -15,18 +15,21 @@ REQ_SPEEDDIALS_6. Users shall be able to delete speed dials
 # Requirements (UI)
 REQ_UI_1. A speed dial shall be a clickable icon representing the webpage
 REQ_UI_2. The user shall be required to confirm for deleting speed dials
-REQ_UI_3. The page shall have a light theme
-REQ_UI_4. The page shall have a dark theme
-REQ_UI_5. Users shall be able to toggle between themes
-REQ_UI_6. Users shall be able to edit the name of a speed dial
-REQ_UI_7. Users shall be able to import and export all the speed dials
-REQ_UI_8. Users shall be able to specify an icon for the speed dial
-REQ_UI_9. Users shall be able to reorder speed dials
+REQ_UI_3. Users shall be able to edit the name of a speed dial
+REQ_UI_4. Users shall be able to import and export all the speed dials
+REQ_UI_5. Users shall be able to specify an icon for the speed dial
+REQ_UI_6. Users shall be able to reorder speed dials
+REQ_UI_7. Users shall be able to specify the size of dials
+
+# Requirements (Theme)
+REQ_THEME_1. The page shall have a light theme
+REQ_THEME_2. The page shall have a dark theme
+REQ_THEME_3. Users shall be able to toggle between themes
 
 # Requirements (Persistence)
 REQ_PERSIST_1. Speed dials shall be persist between browser restarts
 REQ_PERSIST_2. Speed dial ordering shall persist between browser restarts
 REQ_PERSIST_3. Theme selection shall persist between browser restarts
-
+REQ_PERSIST_4. Speed dial sizing shall persist between browser restarts
 
 

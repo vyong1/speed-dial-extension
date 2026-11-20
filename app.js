@@ -1,5 +1,7 @@
 const STORAGE_KEY = "speedDials";
 const THEME_KEY = "speedDialTheme";
+const DIAL_SIZE_KEY = "speedDialSize";
+const DIAL_SIZES = ["small", "medium", "large"];
 
 const defaultDials = [
   { id: "google", name: "Google", url: "https://www.google.com/" },
@@ -27,6 +29,8 @@ const submitButton = form.querySelector(".primary-button");
 const importButton = document.getElementById("importButton");
 const exportButton = document.getElementById("exportButton");
 const importInput = document.getElementById("importInput");
+const dialSizeButtons = document.getElementById("dialSizeButtons");
+const sizeInput = document.getElementById("sizeInput");
 
 let dials = [];
 let editingId = null;
@@ -75,7 +79,7 @@ function readIconFile(file) {
 function getStorage() {
   if (typeof chrome !== "undefined" && chrome.storage && chrome.storage.local) {
     return {
-      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY], result => resolve(result))),
+      get: () => new Promise(resolve => chrome.storage.local.get([STORAGE_KEY, THEME_KEY, DIAL_SIZE_KEY], result => resolve(result))),
       set: value => new Promise(resolve => chrome.storage.local.set(value, resolve))
     };
   }
@@ -83,7 +87,8 @@ function getStorage() {
   return {
     get: () => Promise.resolve({
       [STORAGE_KEY]: JSON.parse(localStorage.getItem(STORAGE_KEY) || "null"),
-      [THEME_KEY]: localStorage.getItem(THEME_KEY)
+      [THEME_KEY]: localStorage.getItem(THEME_KEY),
+      [DIAL_SIZE_KEY]: localStorage.getItem(DIAL_SIZE_KEY)
     }),
     set: value => {
       if (value[STORAGE_KEY] !== undefined) {
@@ -91,6 +96,9 @@ function getStorage() {
       }
       if (value[THEME_KEY] !== undefined) {
         localStorage.setItem(THEME_KEY, value[THEME_KEY]);
+      }
+      if (value[DIAL_SIZE_KEY] !== undefined) {
+        localStorage.setItem(DIAL_SIZE_KEY, value[DIAL_SIZE_KEY]);
       }
       return Promise.resolve();
     }
@@ -106,9 +114,23 @@ function applyTheme(theme) {
   themeButton.setAttribute("aria-label", `Switch to ${nextTheme} theme`);
 }
 
+function normalizeDialSize(size) {
+  return DIAL_SIZES.includes(size) ? size : "medium";
+}
+
+function applyDialSize(size) {
+  const selectedSize = normalizeDialSize(size);
+  document.body.dataset.dialSize = selectedSize;
+  dialSizeButtons.querySelectorAll("[data-size]").forEach(button => {
+    const selected = button.dataset.size === selectedSize;
+    button.setAttribute("aria-checked", String(selected));
+  });
+}
+
 async function loadTheme(storage) {
   const stored = await storage.get();
   applyTheme(stored[THEME_KEY] || "light");
+  applyDialSize(stored[DIAL_SIZE_KEY]);
   return stored;
 }
 
@@ -117,6 +139,14 @@ themeButton.addEventListener("click", async () => {
   applyTheme(nextTheme);
   await getStorage().set({ [THEME_KEY]: nextTheme });
   closeMenu();
+});
+
+dialSizeButtons.addEventListener("click", async event => {
+  const button = event.target.closest("[data-size]");
+  if (!button) return;
+  const selectedSize = normalizeDialSize(button.dataset.size);
+  applyDialSize(selectedSize);
+  await getStorage().set({ [DIAL_SIZE_KEY]: selectedSize });
 });
 
 function closeMenu() {
@@ -159,6 +189,9 @@ function renderDials() {
   dials.forEach(dial => {
     const article = document.createElement("article");
     article.className = "dial";
+    if (DIAL_SIZES.includes(dial.size)) {
+      article.classList.add(`dial-${dial.size}`);
+    }
     article.dataset.dialId = dial.id;
     article.draggable = true;
     article.addEventListener("dragstart", event => {
@@ -247,6 +280,7 @@ function openDialog() {
   form.reset();
   formError.textContent = "";
   editingId = null;
+  sizeInput.value = "";
   logoLookupButton.hidden = true;
   dialogTitle.textContent = "Add speed dial";
   submitButton.textContent = "Add";
@@ -258,6 +292,7 @@ function openEditDialog(dial) {
   form.reset();
   formError.textContent = "";
   editingId = dial.id;
+  sizeInput.value = DIAL_SIZES.includes(dial.size) ? dial.size : "";
   logoLookupButton.hidden = false;
   dialogTitle.textContent = "Edit speed dial";
   submitButton.textContent = "Save";
@@ -342,16 +377,22 @@ form.addEventListener("submit", async event => {
     }
   }
 
+  const dialSize = normalizeDialSize(sizeInput.value);
+  const perDialSize = sizeInput.value && DIAL_SIZES.includes(sizeInput.value)
+    ? dialSize
+    : undefined;
+
   if (editingId) {
     dials = dials.map(dial => dial.id === editingId
-      ? { ...dial, name: dialName, url, icon: icon || undefined }
+      ? { ...dial, name: dialName, url, icon: icon || undefined, size: perDialSize }
       : dial);
   } else {
     dials.push({
       id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : String(Date.now()),
       name: dialName,
       url,
-      icon: icon || undefined
+      icon: icon || undefined,
+      size: perDialSize
     });
   }
   await saveDials();
@@ -360,7 +401,7 @@ form.addEventListener("submit", async event => {
 
 exportButton.addEventListener("click", () => {
   closeMenu();
-  const exportData = dials.map(({ id, name, url, icon }) => ({ id, name, url, icon }));
+  const exportData = dials.map(({ id, name, url, icon, size }) => ({ id, name, url, icon, size }));
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
   const downloadUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -401,7 +442,8 @@ importInput.addEventListener("change", async () => {
           ? dial.icon.startsWith("data:image/")
             ? dial.icon
             : normalizeIconUrl(dial.icon)
-          : undefined
+          : undefined,
+        size: DIAL_SIZES.includes(dial.size) ? dial.size : undefined
       };
     });
     await saveDials();

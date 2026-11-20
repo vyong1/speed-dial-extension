@@ -59,7 +59,7 @@ body {
   top: 52px;
   right: 0;
   z-index: 10;
-  width: 180px;
+  width: 220px;
   border: 1px solid var(--color-surface);
   border-radius: 8px;
   background: var(--color-surface);
@@ -87,6 +87,48 @@ body {
 
 .menu-item:hover,
 .menu-item:focus-visible {
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.menu-size-control {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.dialog select {
+  height: 36px;
+  border: 1px solid var(--color-accent);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+.dial-size-buttons {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dial-size-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 200;
+}
+
+.dial-size-button[aria-checked="true"] {
   background: var(--color-accent);
   color: var(--color-bg);
 }
@@ -126,8 +168,32 @@ h1 {
 
 .dial-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(var(--dial-column-size, 128px), 1fr));
   gap: 28px 20px;
+}
+
+body[data-dial-size="small"] {
+  --dial-column-size: 104px;
+  --dial-icon-size: 64px;
+  --dial-icon-radius: 16px;
+  --dial-image-size: 36px;
+  --dial-name-size: 13px;
+}
+
+body[data-dial-size="medium"] {
+  --dial-column-size: 128px;
+  --dial-icon-size: 88px;
+  --dial-icon-radius: 22px;
+  --dial-image-size: 48px;
+  --dial-name-size: 15px;
+}
+
+body[data-dial-size="large"] {
+  --dial-column-size: 152px;
+  --dial-icon-size: 112px;
+  --dial-icon-radius: 26px;
+  --dial-image-size: 64px;
+  --dial-name-size: 17px;
 }
 
 .dial {
@@ -159,12 +225,33 @@ h1 {
 .dial-icon {
   display: grid;
   place-items: center;
-  width: 88px;
-  height: 88px;
-  border-radius: 22px;
+  width: var(--dial-icon-size);
+  height: var(--dial-icon-size);
+  border-radius: var(--dial-icon-radius);
   background: var(--color-surface);
   box-shadow: 0 2px 10px rgb(60 64 67 / 16%);
   transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.dial.dial-small {
+  --dial-icon-size: 64px;
+  --dial-icon-radius: 16px;
+  --dial-image-size: 36px;
+  --dial-name-size: 13px;
+}
+
+.dial.dial-medium {
+  --dial-icon-size: 88px;
+  --dial-icon-radius: 22px;
+  --dial-image-size: 48px;
+  --dial-name-size: 15px;
+}
+
+.dial.dial-large {
+  --dial-icon-size: 112px;
+  --dial-icon-radius: 26px;
+  --dial-image-size: 64px;
+  --dial-name-size: 17px;
 }
 
 .dial-link:hover .dial-icon,
@@ -174,15 +261,15 @@ h1 {
 }
 
 .dial-icon img {
-  width: 48px;
-  height: 48px;
+  width: var(--dial-image-size);
+  height: var(--dial-image-size);
   object-fit: contain;
 }
 
 .dial-name {
-  max-width: 128px;
+  max-width: var(--dial-column-size, 128px);
   overflow: hidden;
-  font-size: 15px;
+  font-size: var(--dial-name-size, 15px);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -317,6 +404,12 @@ h1 {
 .dialog input:focus {
   border-color: var(--color-accent);
   outline: 2px solid var(--color-accent);
+}
+
+.dialog select {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
 }
 
 .form-error {

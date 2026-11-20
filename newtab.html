@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
+  <body data-dial-size="medium">
     <main class="page">
       <header class="page-header">
         <h1>Home</h1>
@@ -21,6 +21,14 @@
                 <span id="themeIcon" aria-hidden="true">&#9790;</span>
                 <span id="themeLabel">Dark theme</span>
               </button>
+              <div class="menu-size-control" role="none">
+                <span>Dial size</span>
+                <div id="dialSizeButtons" class="dial-size-buttons" role="radiogroup" aria-label="Dial size">
+                  <button class="dial-size-button" type="button" role="radio" data-size="small" aria-label="Small dial size">S</button>
+                  <button class="dial-size-button" type="button" role="radio" data-size="medium" aria-label="Medium dial size">M</button>
+                  <button class="dial-size-button" type="button" role="radio" data-size="large" aria-label="Large dial size">L</button>
+                </div>
+              </div>
               <button id="importButton" class="menu-item" type="button" role="menuitem">Import</button>
               <button id="exportButton" class="menu-item" type="button" role="menuitem">Export</button>
             </div>
@@ -58,6 +66,14 @@
 
           <label for="iconFileInput">Or upload an icon (optional)</label>
           <input id="iconFileInput" name="iconFile" type="file" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp">
+
+          <label for="sizeInput">Size (optional)</label>
+          <select id="sizeInput" name="size">
+            <option value="">Use global size</option>
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
 
           <p id="formError" class="form-error" role="alert"></p>
 

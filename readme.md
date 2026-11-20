@@ -9,6 +9,9 @@ Import and Export in the same menu to back up or restore all speed dials as JSON
 Speed dial icons can be set with an image URL or an uploaded image. Drag speed
 dials to reorder them. In the edit dialog, use the logo lookup button beside the
 icon URL field to search Google for the dial's logo.
+Dial size can be set globally from the menu or individually in the add/edit
+dialog. The global size and each dial's individual size are saved across browser
+restarts.
 
 ## Load the extension in Chrome
 
