@@ -6,8 +6,7 @@ const THEMES = ["light", "dark", "blue", "pink", "sepia"];
 
 const defaultDials = [
   { id: "google", name: "Google", url: "https://www.google.com/" },
-  { id: "youtube", name: "YouTube", url: "https://www.youtube.com/" },
-  { id: "github", name: "GitHub", url: "https://github.com/" }
+  { id: "youtube", name: "YouTube", url: "https://www.youtube.com/" }
 ];
 
 const grid = document.getElementById("dialGrid");
@@ -31,10 +30,12 @@ const importInput = document.getElementById("importInput");
 const dialSizeButtons = document.getElementById("dialSizeButtons");
 const sizeInput = document.getElementById("sizeInput");
 const addButton = document.getElementById("addButton");
+const editModeButton = document.getElementById("editModeButton");
 
 let dials = [];
 let editingId = null;
 let draggedDialId = null;
+let editMode = false;
 
 function normalizeUrl(value) {
   const trimmed = value.trim();
@@ -128,6 +129,21 @@ function applyDialSize(size) {
   });
 }
 
+function applyEditMode(enabled) {
+  editMode = enabled;
+  document.body.classList.toggle("edit-mode", editMode);
+  editModeButton.setAttribute("aria-pressed", String(editMode));
+  editModeButton.title = editMode ? "Exit edit mode" : "Enter edit mode";
+  editModeButton.querySelector(".edit-mode-label").textContent = editMode ? "Done" : "Edit";
+  addButton.hidden = !editMode;
+  renderDials();
+}
+
+editModeButton.addEventListener("click", () => {
+  applyEditMode(!editMode);
+  closeMenu();
+});
+
 async function loadTheme(storage) {
   const stored = await storage.get();
   applyTheme(stored[THEME_KEY] || "light");
@@ -193,15 +209,19 @@ function renderDials() {
       article.classList.add(`dial-${dial.size}`);
     }
     article.dataset.dialId = dial.id;
-    article.draggable = true;
+    article.draggable = editMode;
     article.addEventListener("dragstart", event => {
+      if (!editMode) {
+        event.preventDefault();
+        return;
+      }
       draggedDialId = dial.id;
       article.classList.add("dragging");
       event.dataTransfer.effectAllowed = "move";
       event.dataTransfer.setData("text/plain", dial.id);
     });
     article.addEventListener("dragover", event => {
-      if (!draggedDialId || draggedDialId === dial.id) return;
+      if (!editMode || !draggedDialId || draggedDialId === dial.id) return;
       event.preventDefault();
       event.dataTransfer.dropEffect = "move";
       grid.querySelectorAll(".drag-over").forEach(item => item.classList.remove("drag-over"));
@@ -213,7 +233,7 @@ function renderDials() {
     article.addEventListener("drop", async event => {
       event.preventDefault();
       article.classList.remove("drag-over");
-      if (!draggedDialId || draggedDialId === dial.id) return;
+      if (!editMode || !draggedDialId || draggedDialId === dial.id) return;
 
       const fromIndex = dials.findIndex(item => item.id === draggedDialId);
       if (fromIndex === -1) return;
@@ -235,6 +255,9 @@ function renderDials() {
     link.className = "dial-link";
     link.href = dial.url;
     link.setAttribute("aria-label", `Open ${dial.name}`);
+    link.addEventListener("click", event => {
+      if (editMode) event.preventDefault();
+    });
 
     const icon = document.createElement("span");
     icon.className = "dial-icon";
@@ -275,7 +298,7 @@ function renderDials() {
     grid.appendChild(article);
   });
 
-  grid.appendChild(addButton);
+  if (editMode) grid.appendChild(addButton);
 }
 
 function openDialog() {

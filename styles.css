@@ -50,9 +50,28 @@ body {
 }
 
 .menu-button,
+.edit-mode-button,
 .menu-item {
   border: 0;
   cursor: pointer;
+}
+
+.edit-mode-button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  border-radius: 22px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.edit-mode-button[aria-pressed="true"] {
+  background: var(--color-accent);
+  color: var(--color-bg);
 }
 
 .menu-button {
@@ -111,6 +130,10 @@ body {
   min-height: 44px;
   padding: 6px 10px;
   font-size: 14px;
+}
+
+body:not(.edit-mode) .menu-size-control {
+  display: none;
 }
 
 .menu-theme-control select {
@@ -320,6 +343,12 @@ body[data-dial-size="large"] {
   color: var(--color-text);
   opacity: 0;
   transition: opacity 160ms ease;
+}
+
+body:not(.edit-mode) .delete-button,
+body:not(.edit-mode) .edit-button,
+body:not(.edit-mode) .add-button {
+  display: none;
 }
 
 .edit-button {

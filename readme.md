@@ -7,6 +7,9 @@ includes light, dark, blue, pink, and sepia themes, selected from the header
 hamburger menu's theme dropdown.
 Speed dial names can be edited from the pencil button shown on each dial. Use
 Import and Export in the same menu to back up or restore all speed dials as JSON.
+Use the Edit button in the header to enter edit mode. Edit mode enables dial
+reordering, name editing, individual dial sizing, adding, and deleting. Select
+Done to return to normal mode.
 Speed dial icons can be set with an image URL or an uploaded image. Drag speed
 dials to reorder them. In the edit dialog, use the logo lookup button beside the
 icon URL field to search Google for the dial's logo.
