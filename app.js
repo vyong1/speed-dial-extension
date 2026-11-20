@@ -593,18 +593,28 @@ form.addEventListener("submit", async event => {
   closeDialog();
 });
 
-exportButton.addEventListener("click", () => {
+exportButton.addEventListener("click", async () => {
   closeMenu();
   const exportData = dials.map(({ id, name, url, icon }) => ({ id, name, url, icon }));
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
-  const downloadUrl = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = downloadUrl;
-  link.download = "speed-dials.json";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(downloadUrl);
+  if (typeof window.showSaveFilePicker !== "function") {
+    window.alert("Saving to a chosen location is not supported in this browser.");
+    return;
+  }
+
+  try {
+    const fileHandle = await window.showSaveFilePicker({
+      suggestedName: "speed-dials.json",
+      types: [{ description: "JSON files", accept: { "application/json": [".json"] } }]
+    });
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      window.alert(error.message || "Could not save the export file.");
+    }
+  }
 });
 
 importButton.addEventListener("click", () => {
