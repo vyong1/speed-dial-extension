@@ -152,16 +152,6 @@ async function saveDials() {
   renderDials();
 }
 
-function faviconUrl(url) {
-  const parsed = new URL(url);
-  return `${parsed.origin}/favicon.ico`;
-}
-
-function fallbackFavicon(url) {
-  const origin = encodeURIComponent(new URL(url).origin);
-  return `https://www.google.com/s2/favicons?domain_url=${origin}&sz=128`;
-}
-
 function renderDials() {
   grid.replaceChildren();
 
@@ -215,23 +205,18 @@ function renderDials() {
     const icon = document.createElement("span");
     icon.className = "dial-icon";
 
-    const image = document.createElement("img");
-    image.src = dial.icon || faviconUrl(dial.url);
-    image.alt = "";
-    image.width = 48;
-    image.height = 48;
-    image.addEventListener("error", () => {
-      if (!image.dataset.fallback) {
-        image.dataset.fallback = "true";
-        image.src = fallbackFavicon(dial.url);
-      }
-    }, { once: false });
-
     const name = document.createElement("span");
     name.className = "dial-name";
     name.textContent = dial.name;
 
-    icon.appendChild(image);
+    if (dial.icon) {
+      const image = document.createElement("img");
+      image.src = dial.icon;
+      image.alt = "";
+      image.width = 48;
+      image.height = 48;
+      icon.appendChild(image);
+    }
     link.append(icon, name);
 
     const deleteButton = document.createElement("button");
