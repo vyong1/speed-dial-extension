@@ -281,7 +281,7 @@ function openDialog() {
   formError.textContent = "";
   editingId = null;
   sizeInput.value = "";
-  logoLookupButton.hidden = true;
+  logoLookupButton.hidden = false;
   dialogTitle.textContent = "Add speed dial";
   submitButton.textContent = "Add";
   backdrop.hidden = false;
