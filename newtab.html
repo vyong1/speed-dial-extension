@@ -22,14 +22,14 @@
             </button>
             <div id="menuDropdown" class="menu-dropdown" role="menu" hidden>
               <div class="menu-theme-control" role="none">
-                <label for="themeSelect">Theme</label>
-                <select id="themeSelect" aria-label="Theme">
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                  <option value="blue">Blue</option>
-                  <option value="pink">Pink</option>
-                  <option value="sepia">Sepia</option>
-                </select>
+                <span>Theme</span>
+                <div id="themeButtons" class="theme-buttons" role="group" aria-label="Theme">
+                  <button class="theme-option" type="button" data-theme="dark" aria-label="Dark theme" title="Dark"></button>
+                  <button class="theme-option" type="button" data-theme="light" aria-label="Light theme" title="Light"></button>
+                  <button class="theme-option" type="button" data-theme="blue" aria-label="Blue theme" title="Blue"></button>
+                  <button class="theme-option" type="button" data-theme="pink" aria-label="Pink theme" title="Pink"></button>
+                  <button class="theme-option" type="button" data-theme="sepia" aria-label="Sepia theme" title="Sepia"></button>
+                </div>
               </div>
               <div class="menu-size-control" role="none">
                 <span>Dial size</span>
@@ -39,9 +39,11 @@
                   <button class="dial-size-button" type="button" role="radio" data-size="large" aria-label="Large dial size">L</button>
                 </div>
               </div>
+              <hr/>
               <button id="backgroundImageButton" class="menu-item" type="button" role="menuitem">Upload background</button>
               <button id="removeBackgroundButton" class="menu-item" type="button" role="menuitem" disabled>Remove background</button>
               <p id="backgroundImageStatus" class="menu-status" role="status" aria-live="polite"></p>
+              <hr/>
               <button id="importButton" class="menu-item" type="button" role="menuitem">Import</button>
               <button id="exportButton" class="menu-item" type="button" role="menuitem">Export</button>
             </div>

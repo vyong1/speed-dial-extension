@@ -1,8 +1,18 @@
 /* colors.css */
 :root {
-  --color-bg: #E7E5DE;
+  --theme-light-bg: #E7E5DE;
+  --theme-dark-bg: #0F1115;
+  --theme-blue-bg: #C7D9F0;
+  --theme-pink-bg: #F0CAD8;
+  --theme-sepia-bg: #DCCAA8;
+  --theme-light-accent: #2F5BEA;
+  --theme-dark-accent: #6EA8FE;
+  --theme-blue-accent: #245A94;
+  --theme-pink-accent: #A51E54;
+  --theme-sepia-accent: #754B25;
+  --color-bg: var(--theme-light-bg);
   --color-surface: #D8D5CC;
-  --color-accent: #2F5BEA;
+  --color-accent: var(--theme-light-accent);
   --color-text: #1A1C20;
 }
 
@@ -12,32 +22,32 @@ body[data-theme="light"] {
 
 body[data-theme="dark"] {
   color-scheme: dark;
-  --color-bg: #0F1115;
+  --color-bg: var(--theme-dark-bg);
   --color-surface: #1C2028;
-  --color-accent: #6EA8FE;
+  --color-accent: var(--theme-dark-accent);
   --color-text: #E6E8EC;
 }
 
 body[data-theme="blue"] {
   color-scheme: light;
-  --color-bg: #C7D9F0;
+  --color-bg: var(--theme-blue-bg);
   --color-surface: #ADC7E6;
-  --color-accent: #245A94;
+  --color-accent: var(--theme-blue-accent);
   --color-text: #1D3047;
 }
 
 body[data-theme="pink"] {
   color-scheme: light;
-  --color-bg: #F0CAD8;
+  --color-bg: var(--theme-pink-bg);
   --color-surface: #E3B1C4;
-  --color-accent: #A51E54;
+  --color-accent: var(--theme-pink-accent);
   --color-text: #3F1D2D;
 }
 
 body[data-theme="sepia"] {
   color-scheme: light;
-  --color-bg: #DCCAA8;
+  --color-bg: var(--theme-sepia-bg);
   --color-surface: #CBB58F;
-  --color-accent: #754B25;
+  --color-accent: var(--theme-sepia-accent);
   --color-text: #3C2B1A;
 }

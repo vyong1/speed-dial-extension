@@ -23,7 +23,7 @@ const iconUrlInput = document.getElementById("iconUrlInput");
 const logoLookupButton = document.getElementById("logoLookupButton");
 const iconFileInput = document.getElementById("iconFileInput");
 const formError = document.getElementById("formError");
-const themeSelect = document.getElementById("themeSelect");
+const themeButtons = document.getElementById("themeButtons");
 const menu = document.getElementById("menu");
 const menuButton = document.getElementById("menuButton");
 const menuDropdown = document.getElementById("menuDropdown");
@@ -268,7 +268,9 @@ function normalizeTheme(theme) {
 function applyTheme(theme) {
   const selectedTheme = normalizeTheme(theme);
   document.body.dataset.theme = selectedTheme;
-  themeSelect.value = selectedTheme;
+  themeButtons.querySelectorAll("[data-theme]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.theme === selectedTheme));
+  });
 }
 
 function normalizeDialSize(size) {
@@ -306,8 +308,10 @@ async function loadTheme(storage) {
   return stored;
 }
 
-themeSelect.addEventListener("change", async () => {
-  const selectedTheme = normalizeTheme(themeSelect.value);
+themeButtons.addEventListener("click", async event => {
+  const button = event.target.closest("[data-theme]");
+  if (!button) return;
+  const selectedTheme = normalizeTheme(button.dataset.theme);
   applyTheme(selectedTheme);
   await getStorage().set({ [THEME_KEY]: selectedTheme });
 });
